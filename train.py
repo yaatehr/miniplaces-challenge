@@ -58,6 +58,7 @@ def run():
 
     train_loader, val_loader = dataset.get_data_loaders(batch_size)
     num_train_batches = len(train_loader)
+    num_val_batches = len(val_loader)
 
     criterion = nn.CrossEntropyLoss().to(device)
     # TODO:ptimizer is currently unoptimized
@@ -220,13 +221,13 @@ def run():
             
             accuractyString = 'Epoch %d Train: T1  %.2f, T5 %.2f, Loss %.2f \nEpoch %d Val: V1 %.2f, V5 %.2f, Loss %.2f\n' % (
             epoch,
-            100.0 - correctInTrainEpoch/(epoch_samples),
-            100.0 - top5InTrainEpoch/epoch_samples,
+            100.0 - correctInTrainEpoch/(epoch_samples)*100,
+            100.0 - top5InTrainEpoch/epoch_samples*100,
             epoch_train_loss/(num_train_batches),
             epoch,
-            100.0 - correctInValEpoch/(val_samples),
-            100.0 - top5InValEpoch/(val_samples),
-            epoch_val_loss/(num_train_batches),
+            100.0 - correctInValEpoch/(val_samples)*100,
+            100.0 - top5InValEpoch/(val_samples)*100,
+            epoch_val_loss/(num_val_batches),
             )
 
             print(accuractyString)
