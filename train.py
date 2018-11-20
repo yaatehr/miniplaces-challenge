@@ -37,7 +37,12 @@ def accuracy(output, target, topk=(1,)):
         res = []
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
+            res.append(correct_k)
+        
+        # print(pred)
+        # print(target)
+        # print(correct)
+        # print(res)
         return res
 
 def run():
@@ -70,6 +75,7 @@ def run():
             correctInTrainEpoch = 0
             top5InTrainEpoch = 0
             epoch_samples = 0
+            val_samples = 0
 
             for param_group in optimizer.param_groups:
                 print('Current learning rate: ' + str(param_group['lr']))
@@ -83,7 +89,6 @@ def run():
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
                 loss.backward()
-
                 optimizer.step()
                 running_loss += loss.item()
 
@@ -131,8 +136,8 @@ def run():
                 #     break
                 acc1, acc5 = accuracy(outputs, labels, topk=(1,5))
                 n = outputs.size(0)
-                correctInTrainEpoch += acc1[0]*n
-                top5InTrainEpoch += acc5[0]*n
+                correctInTrainEpoch += acc1[0]
+                top5InTrainEpoch += acc5[0]
                 epoch_samples += n
                 if batch_num % output_period == 0:
                     print('[%d:%.2f] loss: %.3f' % (
@@ -161,7 +166,7 @@ def run():
 
             model.eval()
             with torch.no_grad():
-                for batch_num, (inputs, labels) in enumerate(val_loader, 1):
+                for batch_num, (inputs, labels) in enumerate(val_loader):
                     inputs = inputs.to(device)
                     labels = labels.to(device)
 
@@ -171,10 +176,10 @@ def run():
                     acc1, acc5 = accuracy(outputs, labels, topk=(1,5))
                     n = outputs.size(0)
 
-                    correctInValEpoch += acc1[0]*n
-                    top5InValEpoch += acc5[0]*n
+                    correctInValEpoch += acc1[0]
+                    top5InValEpoch += acc5[0]
                     epoch_val_loss += loss.item()
-
+                    val_samples += n
                     # if batch_num > 5:
                     #     break
                     
@@ -215,13 +220,13 @@ def run():
             
             accuractyString = 'Epoch %d Train: T1  %.2f, T5 %.2f, Loss %.2f \nEpoch %d Val: V1 %.2f, V5 %.2f, Loss %.2f\n' % (
             epoch,
-            correctInTrainEpoch/(epoch_samples),
-            top5InTrainEpoch/epoch_samples,
-            epoch_train_loss/(epoch_samples),
+            100.0 - correctInTrainEpoch/(epoch_samples),
+            100.0 - top5InTrainEpoch/epoch_samples,
+            epoch_train_loss/(num_train_batches),
             epoch,
-            correctInValEpoch/(epoch_samples),
-            top5InValEpoch/(epoch_samples),
-            epoch_val_loss/(epoch_samples),
+            100.0 - correctInValEpoch/(val_samples),
+            100.0 - top5InValEpoch/(val_samples),
+            epoch_val_loss/(num_train_batches),
             )
 
             print(accuractyString)
