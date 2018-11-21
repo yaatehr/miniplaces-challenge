@@ -54,6 +54,7 @@ def run(model_file):
 
     val_loader, test_loader = dataset.get_val_test_loaders(batch_size)
     num_test_batches = len(test_loader)
+    folder_list = val_loader.dataset.classes
 
     with open(model_file + "_test_out.txt", "w") as outptfile:
         model.eval()
@@ -83,7 +84,8 @@ def run(model_file):
                 labels = labels.to(device)
 
                 outputs = model(inputs).topk(5, 1, True, True)[1]
-                outs.extend(list(outputs))
+                classifications = [folder_list[x] for x in outputs]
+                outs.extend(classifications)
         for name, preds in zip(sorted(os.listdir("data/test/999")), outs):
             outptfile.write("test/{} {}".format(name, " ".join([str(x.item()) for x in list(preds)])))
             outptfile.write("\n")
