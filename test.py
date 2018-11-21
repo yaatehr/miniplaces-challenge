@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler
 torch.backends.cudnn.benchmark=True
-
+import numpy as np
 
 from datetime import datetime
 import random
@@ -82,12 +82,16 @@ def run(model_file):
             for batch_num, (inputs, labels) in enumerate(test_loader, 1):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-
                 outputs = model(inputs).topk(5, 1, True, True)[1]
-                classifications = [folder_list[x] for x in outputs]
+                outputs = outputs.cpu()
+                def toFolderNum(x):
+                    return str(folder_list[x])
+                toFolderNumVec = np.vectorize(toFolderNum)
+                classifications = toFolderNumVec(outputs.numpy())
+                #print(classifications)
                 outs.extend(classifications)
         for name, preds in zip(sorted(os.listdir("data/test/999")), outs):
-            outptfile.write("test/{} {}".format(name, " ".join([str(x.item()) for x in list(preds)])))
+            outptfile.write("test/{} {}".format(name, " ".join(preds)))
             outptfile.write("\n")
             
 
