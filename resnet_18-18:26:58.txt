@@ -1,0 +1,18 @@
+Epoch 1 Train: T1  99.98, T5 99.91, Loss 4.57 
+Epoch 1 Val: V1 99.97, V5 99.87, Loss 0.45
+
+Epoch 2 Train: T1  99.96, T5 99.85, Loss 4.43 
+Epoch 2 Val: V1 99.95, V5 99.82, Loss 0.44
+
+Epoch 3 Train: T1  99.94, T5 99.80, Loss 4.31 
+Epoch 3 Val: V1 99.94, V5 99.79, Loss 0.42
+
+Epoch 4 Train: T1  99.93, T5 99.77, Loss 4.19 
+Epoch 4 Val: V1 99.92, V5 99.75, Loss 0.41
+
+Epoch 5 Train: T1  99.92, T5 99.75, Loss 4.10 
+Epoch 5 Val: V1 99.91, V5 99.73, Loss 0.41
+
+Epoch 6 Train: T1  99.91, T5 99.73, Loss 4.03 
+Epoch 6 Val: V1 99.91, V5 99.72, Loss 0.40
+
